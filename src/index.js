@@ -6,6 +6,9 @@ const dotenv = require('dotenv');
 
 const HttpException = require('./utils/HttpExceptionUtils.js');
 const errorMiddleware = require('./middleware/errorMiddleware');
+const https = require('https');
+const fs = require('fs');
+
 
 const path = require('path');
 
@@ -61,9 +64,13 @@ app.all('*', (req, res, next) => {
 
 // Public
 
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
+
+var httpsServer = https.createServer(options,app);
+httpsServer.listen(8443);
 
 
-app.listen(app.get('port'), () => {
-  console.log('Server on port', app.get('port'))
-});
 
