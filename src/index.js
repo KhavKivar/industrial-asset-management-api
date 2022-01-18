@@ -20,7 +20,6 @@ app.use(cors());
 
 
 // Enable pre-flight
-app.options("*", cors());
 
 
 // Init environment
@@ -53,13 +52,23 @@ app.use(errorMiddleware);
 
 app.use("/api/equipo/",require('./routes/equipoRoutes'));
 
+app.use(
+  cors({
+    allowedHeaders: ["authorization", "Content-Type"], // you can change the headers
+    exposedHeaders: ["authorization"], // you can change the headers
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false
+  })
+);
+
+
 
 // Missing route 404 error
 app.all('*', (req, res, next) => {
   const err = new HttpException(404, 'Endpoint Not Found');
   next(err);
 });
-
 
 
 // Public
@@ -69,8 +78,11 @@ const options = {
   cert: fs.readFileSync('cert.pem')
 };
 
-var httpsServer = https.createServer(options,app);
-httpsServer.listen(8443);
+//var httpsServer = https.createServer(options,app);
+//httpsServer.listen(8443);
 
+app.listen(app.get('port'), () => {
+  console.log('Server on port', app.get('port'))
+});
 
 
