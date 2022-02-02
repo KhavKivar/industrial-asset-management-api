@@ -31,13 +31,13 @@ class EquipoModel {
         return result[0];
     }
 
-    create = async ({ id, tipo, marca, modelo, serie, capacidad, mastil = "", altura = 0, ano, horometro, precio_neto }) => {
+    create = async ({ idEquipo, tipo, marca, modelo, serie, capacidad, mastil = "", altura = 0, ano, horometro, precio_neto }) => {
         const sql = `INSERT INTO ${this.tableName}
-        (id, tipo, marca, modelo, serie, capacidad, mastil,altura,ano,horometro,precio_neto) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
+        (idEquipo, tipo, marca, modelo, serie, capacidad, mastil,altura,ano,horometro,precio_neto) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
 
         try {
 
-            const result = await query(sql, [id, tipo, marca, modelo, serie, capacidad, mastil, altura, ano, horometro, precio_neto]);
+            const result = await query(sql, [idEquipo, tipo, marca, modelo, serie, capacidad, mastil, altura, ano, horometro, precio_neto]);
             let affectedRows = result ? result.affectedRows : 0;
             return {rows:affectedRows,error:0};
         } catch (e) {
@@ -55,7 +55,7 @@ class EquipoModel {
     update = async (params, id) => {
         const { columnSet, values } = multipleColumnSet(params)
 
-        const sql = `UPDATE equipo SET ${columnSet} WHERE id = ?`;
+        const sql = `UPDATE equipo SET ${columnSet} WHERE idEquipo = ?`;
 
         const result = await query(sql, [...values, id]);
 
