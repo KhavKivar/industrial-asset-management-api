@@ -15,9 +15,11 @@ class inspeccionController{
         console.log(inspeccionList);
 
         if (!inspeccionList.length) {
-            throw new HttpException(404, 'inspeccion not found');
+            res.status(200).send([]);
+        }else{
+            res.send(inspeccionList);
         }
-        res.send(inspeccionList);
+       
     };
 
     getOne =  async (req, res, next) => {
@@ -25,7 +27,10 @@ class inspeccionController{
         if (!inspeccion) {
             res.send('equipo no encontrado');
         }
-        res.send(inspeccion);
+        else{
+            res.send(inspeccion);
+        }
+       
     };
 
 

@@ -16,17 +16,22 @@ class EquipoController {
     getAllEquipo = async (req, res, next) => {
         let equipoList = await EquipoModel.find();
         if (!equipoList.length) {
-            throw new HttpException(404, 'equipos not found');
+            res.send([]);
         }
-        res.send(equipoList);
+        else{
+            res.send(equipoList);
+        }
+        
     };
   
     getEquipoById = async (req, res, next) => {
         const equipo = await EquipoModel.findOne({ id: req.params.id });
         if (!equipo) {
-            res.send('equipo no encontrado');
+            res.send([]);
+        }else{
+            res.send(equipo);
         }
-        res.send(equipo);
+       
     };
 
     createEquipo = async (req, res, next) => {
@@ -70,9 +75,12 @@ class EquipoController {
  
         const result = await EquipoModel.delete(req.params.id);
         if (!result) {
-            throw new HttpException(404, 'Equipo not found');
+            res.send('Equipo not found');
+           
+        }else{
+            res.send('Equipo eliminado');
         }
-        res.send('Equipo eliminado');
+       
     };
 
 
