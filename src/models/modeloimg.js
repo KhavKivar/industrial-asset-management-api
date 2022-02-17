@@ -3,22 +3,15 @@
 const query = require('../db/db_connection');
 const { multipleColumnSet } = require('../utils/commonUtils');
 
-class EquipoModel {
-    tableName = 'equipo';
+class ModelImgModel {
+    tableName = 'modeloimagen';
 
     find = async (params = {}) => {
         let sql = `SELECT * FROM ${this.tableName}`;
 
         if (!Object.keys(params).length) {
             const result = await query(sql);
-            for (var x in result) {
-                if (typeof result[x].altura == 'number')
-                    result[x].altura = parseFloat(result[x].altura.toFixed(2),10);
-
-            }
-
             return result;
-
         }
 
         const { columnSet, values } = multipleColumnSet(params)
@@ -39,13 +32,12 @@ class EquipoModel {
         return result[0];
     }
 
-    create = async ({ idEquipo, tipo, marca, modelo, serie, capacidad, mastil = "", altura = 0, ano, horometro, precio_neto }) => {
+    create = async ({modelo,url}) => {
         const sql = `INSERT INTO ${this.tableName}
-        (idEquipo, tipo, marca, modelo, serie, capacidad, mastil,altura,ano,horometro,precio_neto) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
-
+        ( modelo, url) VALUES (?,?)`;
         try {
 
-            const result = await query(sql, [idEquipo, tipo, marca, modelo, serie, capacidad, mastil, altura, ano, horometro, precio_neto]);
+            const result = await query(sql, [modelo,url]);
             let affectedRows = result ? result.affectedRows : 0;
             return { rows: affectedRows, error: 0 };
         } catch (e) {
@@ -63,17 +55,17 @@ class EquipoModel {
     update = async (params, id) => {
         const { columnSet, values } = multipleColumnSet(params)
 
-        const sql = `UPDATE equipo SET ${columnSet} WHERE idEquipo = ?`;
+        const sql = `UPDATE  ${this.tableName} SET ${columnSet} WHERE modelo = ?`;
 
         const result = await query(sql, [...values, id]);
 
         return result;
     }
 
-    delete = async (id) => {
+    delete = async (rut) => {
         const sql = `DELETE FROM ${this.tableName}
-        WHERE id = ?`;
-        const result = await query(sql, [id]);
+        WHERE modelo = ?`;
+        const result = await query(sql, [rut]);
         const affectedRows = result ? result.affectedRows : 0;
 
         return affectedRows;
@@ -83,4 +75,4 @@ class EquipoModel {
 
 
 
-module.exports = new EquipoModel;
+module.exports = new ModelImgModel;

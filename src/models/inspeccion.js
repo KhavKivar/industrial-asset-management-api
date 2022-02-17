@@ -44,6 +44,7 @@ class InspeccionModel {
         joystick, serieCargador, cargadorVoltaje, enchufe,
         tapaCombustible, tapaRadiador, transmision, observacion,
         alturaLevante, carga, cilindroDeGas, bateriaObservaciones, serieCargardorText, cargadorVoltajeInfo, enchufeInfo,
+        horometroActual,
 
         firmaURL, rut, nombre
 
@@ -59,10 +60,10 @@ class InspeccionModel {
                 alternador,bateria,chapaContacto,sistemaElectrico,horometro,motorPartida,palancaComando,switchLuces,switchMarcha,cadena,
                 carro,horquilla,jaula,llantas,mastil,pintura,rueda,cantidadRueda,desplazadorLateral,direccion,frenoMano,frenoPie,
                 inclinacion, levante, motor, nivelAceiteHidraulico, nivelAceiteMotor, nivelAceiteTransmision, nivelLiquinoFreno,
-                tapaCombustible, tapaRadiador,transmision,observacion,alturaLevante,carga,cilindroDeGas, firmaURL, rut, nombre
+                tapaCombustible, tapaRadiador,transmision,observacion,alturaLevante,carga,cilindroDeGas,horometroActual, firmaURL, rut, nombre
                 ) VALUES (?,?,?,?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?,?,     ?,?,?,?,?,?,?,?,?,?,
                           ?,?,?,?,?,?,?,?,?,?,   ?,?,?,?,?,?,?,?,?,?,     ?,?,?,?,?,?,?,?,?,?,
-                          ?,?,?,?,?,?,?,?
+                          ?,?,?,?,?,?,?,?,?
                     
                     )`;
 
@@ -76,8 +77,12 @@ class InspeccionModel {
                     alternador, bateria, chapaContacto, sistemaElectrico, horometro, motorPartida, palancaComando, switchLuces, switchMarcha, cadena,
                     carro, horquilla, jaula, llantas, mastil, pintura, rueda, cantidadRueda, desplazadorLateral, direccion, frenoMano, frenoPie,
                     inclinacion, levante, motor, nivelAceiteHidraulico, nivelAceiteMotor, nivelAceiteTransmision, nivelLiquinoFreno,
-                    tapaCombustible, tapaRadiador, transmision, observacion, alturaLevante, carga, cilindroDeGas, firmaURL, rut, nombre]);
-
+                    tapaCombustible, tapaRadiador, transmision, observacion, alturaLevante, carga, cilindroDeGas,horometroActual, firmaURL, rut, nombre]);
+                          //update horometro equipo
+               
+                
+                const sqlUpdate = `UPDATE equipo SET horometro = (?) where idEquipo= (?)`;
+                const resultUpdate = await query(sqlUpdate,[horometroActual,idEquipo]);
 
                 let affectedRows = result ? result.affectedRows : 0;
                 return { rows: affectedRows, error: 0, id: result.insertId };
@@ -100,12 +105,12 @@ class InspeccionModel {
               bateria,chapaContacto,sistemaElectrico,horometro,palancaComando,switchLuces,switchMarcha,joystick,cadena,
                 carro,horquilla,jaula,llantas,mastil,pintura,rueda,cantidadRueda,desplazadorLateral,direccion,frenoMano,frenoPie,
                 inclinacion, levante,serieCargador, nivelAceiteHidraulico, nivelLiquinoFreno,cargadorVoltaje,enchufe,
-                    observacion,alturaLevante,carga,bateriaObservaciones,serieCargardorText,cargadorVoltajeInfo,enchufeInfo, firmaURL, rut, nombre
+                    observacion,alturaLevante,carga,bateriaObservaciones,serieCargardorText,cargadorVoltajeInfo,enchufeInfo,horometroActual, firmaURL, rut, nombre
 
 
                 ) VALUES (?,?,?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?,?,     ?,?,?,?,?,?,?,?,?,?,
                           ?,?,?,?,?,?,?,?,?,?,   ?,?,?,?,?,?,?,?,?,?,     ?,?,?,?,?,?,?,?,?,?,
-                         ?,?,?,?,?,?,?
+                         ?,?,?,?,?,?,?,?
                     
                     )`;
 
@@ -118,7 +123,7 @@ class InspeccionModel {
                     bateria, chapaContacto, sistemaElectrico, horometro, palancaComando, switchLuces, switchMarcha, joystick, cadena,
                     carro, horquilla, jaula, llantas, mastil, pintura, rueda, cantidadRueda, desplazadorLateral, direccion, frenoMano, frenoPie,
                     inclinacion, levante, serieCargador, nivelAceiteHidraulico, nivelLiquinoFreno, cargadorVoltaje, enchufe,
-                    observacion, alturaLevante, carga, bateriaObservaciones, serieCargardorText, cargadorVoltajeInfo, enchufeInfo, firmaURL, rut, nombre];
+                    observacion, alturaLevante, carga, bateriaObservaciones, serieCargardorText, cargadorVoltajeInfo, enchufeInfo, horometroActual,firmaURL, rut, nombre];
 
                 for (var i in x) {
                     console.log(i, x[i]);
@@ -131,8 +136,9 @@ class InspeccionModel {
                     bateria, chapaContacto, sistemaElectrico, horometro, palancaComando, switchLuces, switchMarcha, joystick, cadena,
                     carro, horquilla, jaula, llantas, mastil, pintura, rueda, cantidadRueda, desplazadorLateral, direccion, frenoMano, frenoPie,
                     inclinacion, levante, serieCargador, nivelAceiteHidraulico, nivelLiquinoFreno, cargadorVoltaje, enchufe,
-                    observacion, alturaLevante, carga, bateriaObservaciones, serieCargardorText, cargadorVoltajeInfo, enchufeInfo, firmaURL, rut, nombre]);
-
+                    observacion, alturaLevante, carga, bateriaObservaciones, serieCargardorText, cargadorVoltajeInfo, enchufeInfo,horometroActual, firmaURL, rut, nombre]);
+                const sqlUpdate = `UPDATE equipo SET horometro = (?) where idEquipo= (?)`;
+                const resultUpdate = await query(sqlUpdate,[horometroActual,idEquipo]);
 
                 let affectedRows = result ? result.affectedRows : 0;
                 return { rows: affectedRows, error: 0, id: result.insertId };

@@ -11,13 +11,15 @@ const dotenv = require('dotenv');
 class movimientoController{
     
     getAll = async (req, res, next) => {
-        let inspeccionList = await MovimientoModel.find();
-        console.log(inspeccionList);
+        let movimientoList = await MovimientoModel.find();
+        console.log(movimientoList);
 
-        if (!inspeccionList.length) {
-            throw new HttpException(404, 'inspeccion not found');
+        if (!movimientoList.length) {
+            res.send([]);
+        }else{
+            res.send(movimientoList);
         }
-        res.send(inspeccionList);
+       
     };
 
 
@@ -26,15 +28,48 @@ class movimientoController{
         console.log(req.body);
         const result  = await MovimientoModel.create(req.body);
         if (result.error ==0) {
-            res.status(201).send("Movmiento creado con exito");
+            const movimiento = await MovimientoModel.find({idInspeccion:req.body.idInspeccion});
+
+            res.status(201).send(movimiento[0]);
         }else{
             if(result.error == 1){
-                res.status(505).send("El codigo ya existe");
+                res.status(505).send("La id ya existe");
             }else{
                 res.status(505).send("Error desconocido");
             }
         }
       
+    };
+
+    update =  async (req, res, next) => {
+        
+       
+        const result = await MovimientoModel.update(req.body, req.params.id);
+
+        if (!result) {
+            res.send("ERROR");
+        }else{
+            const { affectedRows, changedRows, info } = result;
+            const movimiento = await MovimientoModel.find({idMovimiento:req.params.id});
+
+            res.send(movimiento[0]);
+        }
+
+       
+
+       
+    };
+
+    remove =  async (req, res, next) => {
+ 
+        const result = await MovimientoModel.delete(req.params.id);
+        if (!result) {
+            res.send('Mov not found');
+           
+        }else{
+            res.send('Mov eliminado');
+        }
+       
     };
 }
 

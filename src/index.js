@@ -6,10 +6,13 @@ const dotenv = require('dotenv');
 
 const HttpException = require('./utils/HttpExceptionUtils.js');
 const errorMiddleware = require('./middleware/errorMiddleware');
+const http = require('http');
 const https = require('https');
 const fs = require('fs');
 
 const path = require('path');
+
+
 
 //aws
 
@@ -54,6 +57,8 @@ app.use(errorMiddleware);
 
 
 // Routes
+app.use("/api/cliente/", require('./routes/clienteRoutes'));
+app.use("/api/modelo/", require('./routes/modeloRoutes'));
 
 app.use("/api/equipo/", require('./routes/equipoRoutes'));
 app.use("/api/inspeccion/", require('./routes/inspeccionRoutes'));
@@ -138,16 +143,21 @@ app.all('*', (req, res, next) => {
 
 // Public
 
-const options = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem')
-};
 
 //var httpsServer = https.createServer(options,app);
 //httpsServer.listen(8443);
 
-app.listen(app.get('port'), () => {
-  console.log('Server on port', app.get('port'))
-});
 
+var options = {
+  key: fs.readFileSync('client-key.pem'),
+  cert: fs.readFileSync('client-cert.pem')
+};
+
+
+
+
+// Create an HTTP service.
+http.createServer(app).listen(80);
+// Create an HTTPS service identical to the HTTP service.
+https.createServer(options, app).listen(443);
 
