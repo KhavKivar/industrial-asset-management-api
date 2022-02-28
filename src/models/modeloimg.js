@@ -4,7 +4,7 @@ const query = require('../db/db_connection');
 const { multipleColumnSet } = require('../utils/commonUtils');
 
 class ModelImgModel {
-    tableName = 'modeloimagen';
+    tableName = 'modeloImagen';
 
     find = async (params = {}) => {
         let sql = `SELECT * FROM ${this.tableName}`;
