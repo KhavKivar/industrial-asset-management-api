@@ -10,7 +10,10 @@ class DBConnection {
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
             password: process.env.DB_PASS,
-            database: process.env.DB_DATABASE
+            database: process.env.DB_DATABASE,
+            waitForConnections: true,
+            connectionLimit: 10,
+            queueLimit: 0
         });
 
         this.checkConnection();
@@ -47,7 +50,7 @@ class DBConnection {
                 resolve(result);
             }
             // execute will internally call prepare and query
-            this.db.execute(sql, values, callback);
+            this.db.query(sql, values, callback);
         }).catch(err => {
             const mysqlErrorList = Object.keys(HttpStatusCodes);
             // convert mysql errors which in the mysqlErrorList list to http status code
@@ -56,6 +59,7 @@ class DBConnection {
             throw err;
         });
     }
+    
 }
 
 // like ENUM

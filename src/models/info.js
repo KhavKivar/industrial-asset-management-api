@@ -2,6 +2,9 @@
 
 const query = require('../db/db_connection');
 const { multipleColumnSet } = require('../utils/commonUtils');
+const dotenv = require('dotenv');
+const mysql = require('mysql2');
+dotenv.config();
 
 class InfoModel {
 
@@ -12,11 +15,14 @@ class InfoModel {
         let sqlEq = `select UPDATE_TIME from information_schema.tables
          where table_schema = 'mydb' and table_name='equipo';`;
         
-         let sqlIns = `select UPDATE_TIME from information_schema.tables where
+        let sqlIns = `select UPDATE_TIME from information_schema.tables where
          table_schema = 'mydb' and table_name='inspeccion';`;
         
-         let sqlImg = `select UPDATE_TIME from information_schema.tables where
+        let sqlImg = `select UPDATE_TIME from information_schema.tables where
          table_schema = 'mydb' and table_name='modeloImagen';`;
+        
+
+
 
         const lastUpdateEquipos =  await query(sqlEq);
         const lastUpdateInspeccion =  await query(sqlIns);
