@@ -60,6 +60,8 @@ app.use(errorMiddleware);
 app.use("/api/cliente/", require('./routes/clienteRoutes'));
 app.use("/api/modelo/", require('./routes/modeloRoutes'));
 
+app.use("/api/getLastUpdate/", require('./routes/infoRoutes'));
+
 app.use("/api/equipo/", require('./routes/equipoRoutes'));
 app.use("/api/inspeccion/", require('./routes/inspeccionRoutes'));
 app.use("/api/movimiento/", require('./routes/movimientoRoutes'));
