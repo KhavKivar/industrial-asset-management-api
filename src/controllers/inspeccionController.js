@@ -12,7 +12,7 @@ class inspeccionController{
     
     getAll = async (req, res, next) => {
         let inspeccionList = await InspeccionModel.find();
-        console.log(inspeccionList);
+        
 
         if (!inspeccionList.length) {
             res.status(200).send([]);
@@ -37,7 +37,7 @@ class inspeccionController{
 
     create = async (req, res, next) => {
 
-        console.log(req.body);
+        
         const result  = await InspeccionModel.create(req.body);
         if (result.error ==0) {
             console.log(result);
@@ -51,6 +51,26 @@ class inspeccionController{
             }
         }
       
+    };
+    
+    edit =  async (req, res, next) => {
+        
+       
+        const result = await InspeccionModel.update(req.body, req.params.id);
+
+        if (result == null) {
+            res.status(505).send({error:"update error"});
+            
+        }
+        else{
+            const inspeccion = await InspeccionModel.findOne({ idInspeccion : result });
+            res.status(201).send(inspeccion);
+            
+        }
+
+     
+
+       
     };
 }
 

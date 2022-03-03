@@ -56,16 +56,19 @@ class EquipoController {
         const result = await EquipoModel.update(req.body, req.params.id);
 
         if (!result) {
-            throw new HttpException(404, 'Something went wrong');
+         
+            res.status(505).send({error:"error al editar"});
+        }else{
+            const { affectedRows, changedRows, info } = result;
+
+            const message = !affectedRows ? 'User not found' :
+                affectedRows && changedRows ? 'User updated successfully' : 'Updated faild';
+    
+            res.send({ message, info });
+    
         }
 
-        const { affectedRows, changedRows, info } = result;
-
-        const message = !affectedRows ? 'User not found' :
-            affectedRows && changedRows ? 'User updated successfully' : 'Updated faild';
-
-        res.send({ message, info });
-
+       
        
     };
 
