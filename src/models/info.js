@@ -11,27 +11,18 @@ class InfoModel {
 
     get = async (params = {}) => {
         const listOfUpdate = [];
+          
+        let sql = `select UPDATE_TIME from information_schema.tables
+         where table_schema = 'mydb';`;
         
-        let sqlEq = `select UPDATE_TIME from information_schema.tables
-         where table_schema = 'mydb' and table_name='equipo';`;
-        
-        let sqlIns = `select UPDATE_TIME from information_schema.tables where
-         table_schema = 'mydb' and table_name='inspeccion';`;
-        
-        let sqlImg = `select UPDATE_TIME from information_schema.tables where
-         table_schema = 'mydb' and table_name='modeloImagen';`;
+        const lastUpdate =  await query(sql);
         
 
 
-
-        const lastUpdateEquipos =  await query(sqlEq);
-        const lastUpdateInspeccion =  await query(sqlIns);
-        const lastUpdateModeloImagen =  await query(sqlImg);
-
-
-        listOfUpdate.push(lastUpdateEquipos[0]);
-        listOfUpdate.push(lastUpdateInspeccion[0]);
-        listOfUpdate.push(lastUpdateModeloImagen[0]);
+        listOfUpdate.push(lastUpdate[1]);
+        listOfUpdate.push(lastUpdate[2]);
+        listOfUpdate.push(lastUpdate[3]);
+        listOfUpdate.push(lastUpdate[4]);
 
 
         return listOfUpdate ;

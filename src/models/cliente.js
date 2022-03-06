@@ -32,43 +32,60 @@ class ClienteModel {
         return result[0];
     }
 
-    create = async ({rut,nombre,telefono}) => {
+    create = async ({ rut, nombre, telefono }) => {
         const sql = `INSERT INTO ${this.tableName}
         ( rut, nombre,telefono) VALUES (?,?,?)`;
         try {
 
-            const result = await query(sql, [rut,nombre,telefono]);
+            const result = await query(sql, [rut, nombre, telefono]);
             let affectedRows = result ? result.affectedRows : 0;
             return { rows: affectedRows, error: 0 };
         } catch (e) {
             console.log(e);
             if (e.code == "ER_DUP_ENTRY") {
-
-                return { rows: 0, error: 1 };
+                return { message: { sqlMessage: "El cliente ya existe" }, error: true };
             } else {
-                return { rows: 0, error: 2 };
+                return { message: e, error: true };
             }
         }
 
     }
 
     update = async (params, id) => {
-        const { columnSet, values } = multipleColumnSet(params)
+        try {
+            const { columnSet, values } = multipleColumnSet(params)
 
-        const sql = `UPDATE  ${this.tableName} SET ${columnSet} WHERE rut = ?`;
+            const sql = `UPDATE  ${this.tableName} SET ${columnSet} WHERE rut = ?`;
 
-        const result = await query(sql, [...values, id]);
+            const result = await query(sql, [...values, id]);
 
-        return result;
+            return result;
+        } catch (e) {
+            if (e.code == "ER_DUP_ENTRY") {
+                return { message: { sqlMessage: "El cliente ya existe" }, error: true };
+            } else {
+                return { message: e, error: true };
+            }
+
+        }
     }
 
     delete = async (rut) => {
-        const sql = `DELETE FROM ${this.tableName}
+        try {
+            const sql = `DELETE FROM ${this.tableName}
         WHERE rut = ?`;
-        const result = await query(sql, [rut]);
-        const affectedRows = result ? result.affectedRows : 0;
+            const result = await query(sql, [rut]);
+            const affectedRows = result ? result.affectedRows : 0;
 
-        return affectedRows;
+            return affectedRows;
+        } catch (e) {
+            console.log(e);
+            if(e.code ==  'ER_ROW_IS_REFERENCED_2'){
+                return {error:true,message:{sqlMessage:'Existen movimientos asociado a este cliente'}};
+            }
+           
+            return {error:true,message:e};
+        }
     }
 
 }

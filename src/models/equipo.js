@@ -13,7 +13,7 @@ class EquipoModel {
             const result = await query(sql);
             for (var x in result) {
                 if (typeof result[x].altura == 'number')
-                    result[x].altura = parseFloat(result[x].altura.toFixed(2),10);
+                    result[x].altura = parseFloat(result[x].altura.toFixed(2), 10);
 
             }
 
@@ -49,34 +49,43 @@ class EquipoModel {
             let affectedRows = result ? result.affectedRows : 0;
             return { rows: affectedRows, error: 0 };
         } catch (e) {
-            console.log(e);
             if (e.code == "ER_DUP_ENTRY") {
-
-                return { rows: 0, error: 1 };
+                return { message: { sqlMessage: "El codigo interno ya existe" }, error: true };
             } else {
-                return { rows: 0, error: 2 };
+                return { message: e, error: true };
             }
         }
 
     }
 
     update = async (params, id) => {
-        const { columnSet, values } = multipleColumnSet(params)
+        try {
 
-        const sql = `UPDATE equipo SET ${columnSet} WHERE idEquipo = ?`;
 
-        const result = await query(sql, [...values, id]);
+            const { columnSet, values } = multipleColumnSet(params)
 
-        return result;
+            const sql = `UPDATE equipo SET ${columnSet} WHERE idEquipo = ?`;
+
+            const result = await query(sql, [...values, id]);
+
+            return result;
+        } catch (e) {
+            return { error: true, message: e }
+        }
     }
 
     delete = async (id) => {
-        const sql = `DELETE FROM ${this.tableName}
-        WHERE id = ?`;
-        const result = await query(sql, [id]);
-        const affectedRows = result ? result.affectedRows : 0;
+        try {
+            const sql = `DELETE FROM ${this.tableName}
+        WHERE idEquipo = ?`;
+            const result = await query(sql, [id]);
+            const affectedRows = result ? result.affectedRows : 0;
 
-        return affectedRows;
+            return affectedRows;
+        } catch (e) {
+            console.log(e)
+            return { error: true, message: {sqlMessage:"el equipo no existe"} };
+        }
     }
 
 }

@@ -19,7 +19,7 @@ class EquipoController {
             res.send([]);
         }
         else{
-            res.send(equipoList);
+            res.status(200).send(equipoList);
         }
         
     };
@@ -29,7 +29,7 @@ class EquipoController {
         if (!equipo) {
             res.send([]);
         }else{
-            res.send(equipo);
+            res.status(200).send(equipo);
         }
        
     };
@@ -38,38 +38,26 @@ class EquipoController {
 
         console.log(req.body);
         const result  = await EquipoModel.create(req.body);
-        if (result.error ==0) {
-            res.status(201).send("Equipo creado con exito");
+        if (result.error == true) {
+            res.status(505).send(result);
         }else{
-            if(result.error == 1){
-                res.status(505).send("El codigo ya existe");
-            }else{
-                res.status(505).send("Error desconocido");
-            }
+            res.status(200).send("Equipo creado con exito");  
         }
       
     };
 
     updateEquipo =  async (req, res, next) => {
         
-       
         const result = await EquipoModel.update(req.body, req.params.id);
-
-        if (!result) {
-         
-            res.status(505).send({error:"error al editar"});
+        console.log(result.error);
+        if (result.error == true) {
+            res.status(505).send(result);
         }else{
             const { affectedRows, changedRows, info } = result;
-
             const message = !affectedRows ? 'User not found' :
                 affectedRows && changedRows ? 'User updated successfully' : 'Updated faild';
-    
-            res.send({ message, info });
-    
+            res.status(200).send({ message, info });
         }
-
-       
-       
     };
 
 
@@ -77,16 +65,14 @@ class EquipoController {
     removeEquipoById =  async (req, res, next) => {
  
         const result = await EquipoModel.delete(req.params.id);
-        if (!result) {
-            res.send('Equipo not found');
+        if (result.error == true) {
+            res.status(505).send(result);
            
         }else{
-            res.send('Equipo eliminado');
+            res.status(200).send('Equipo eliminado');
         }
        
     };
-
-
 
     
 }

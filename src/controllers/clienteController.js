@@ -18,64 +18,53 @@ class ClienteController {
         if (!clienteList.length) {
             res.send([]);
         }
-        else{
+        else {
             res.send(clienteList);
         }
-        
+
     };
 
     createCliente = async (req, res, next) => {
 
-        console.log(req.body);
-        const result  = await ClienteModel.create(req.body);
-        if (result.error ==0) {
-            res.status(201).send("Cliente creado con exito");
-        }else{
-            if(result.error == 1){
-                res.status(505).send("El cliente ya existe");
-            }else{
-                res.status(505).send("Error desconocido");
-            }
+        const result = await ClienteModel.create(req.body);
+        if (result.error == true) {
+            res.status(505).send(result);
+        } else {
+            res.status(200).send("Cliente creado con exito");
         }
-      
+
     };
 
-    updateCliente =  async (req, res, next) => {
-        
-       
+    updateCliente = async (req, res, next) => {
+
         const result = await ClienteModel.update(req.body, req.params.id);
-
-        if (!result) {
-            throw new HttpException(404, 'Something went wrong');
+        if (result.error == true) {
+            res.status(505).send(result);
+        } else {
+            const { affectedRows, changedRows, info } = result;
+            const message = !affectedRows ? 'User not found' :
+                affectedRows && changedRows ? 'User updated successfully' : 'Updated faild';
+            res.status(200).send({ message, info });
         }
 
-        const { affectedRows, changedRows, info } = result;
-
-        const message = !affectedRows ? 'User not found' :
-            affectedRows && changedRows ? 'User updated successfully' : 'Updated faild';
-
-        res.send({ message, info });
-
-       
     };
 
 
 
-    removeClienteById =  async (req, res, next) => {
- 
+    removeClienteById = async (req, res, next) => {
+
         const result = await ClienteModel.delete(req.params.id);
-        if (!result) {
-            res.send('Equipo not found');
-           
-        }else{
-            res.send('Equipo eliminado');
+        if (result.error == true) {
+            res.status(505).send(result);
+        } else {
+            res.status(200).send('Cliente eliminado');
         }
-       
+
     };
 
 
 
-    
+
 }
 
 

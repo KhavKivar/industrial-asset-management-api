@@ -8,28 +8,33 @@ class InspeccionModel {
 
 
     find = async (params = {}) => {
-        let sql = `SELECT * FROM ${this.tableName}`;
-        if (!Object.keys(params).length) {
-            return await query(sql);
+        try {
+            let sql = `SELECT * FROM ${this.tableName}`;
+            if (!Object.keys(params).length) {
+                return await query(sql);
+            }
+
+            const { columnSet, values } = multipleColumnSet(params)
+            sql += ` WHERE ${columnSet}`;
+
+            return await query(sql, [...values]);
+        } catch (e) {
+            return [];
         }
-
-        const { columnSet, values } = multipleColumnSet(params)
-        sql += ` WHERE ${columnSet}`;
-
-        return await query(sql, [...values]);
     }
 
 
     findOne = async (params) => {
-        const { columnSet, values } = multipleColumnSet(params)
-        console.log(columnSet);
-        const sql = `SELECT * FROM ${this.tableName}
+        try {
+            const { columnSet, values } = multipleColumnSet(params)
+            console.log(columnSet);
+            const sql = `SELECT * FROM ${this.tableName}
         WHERE ${columnSet}`;
-
-        const result = await query(sql, [...values]);
-
-
-        return result[0];
+            const result = await query(sql, [...values]);
+            return result[0];
+        } catch (e) {
+            return []
+        }
     }
 
     create = async ({
@@ -50,7 +55,7 @@ class InspeccionModel {
 
     }) => {
         if (tipo == 'acta_equipo') {
-            console.log("entro");
+           
             const sql = `INSERT INTO ${this.tableName}
             (tipo, alarmaRetroceso, asientoOperador, baliza, idEquipo, bocina, extintor,espejos,cantidadEspejos,
                 focosFaenerosDelanteros,cantidadFocosFaenerosDelanteros,focosFaenerosTraseros,cantidadFocosFaenerosTraseros,
@@ -89,9 +94,9 @@ class InspeccionModel {
             } catch (e) {
                 console.log(e);
                 if (e.code == "ER_DUP_ENTRY") {
-                    return { rows: 0, error: 1 };
+                    return { error: true,message:{sqlMessage:"La acta ya existe"} };
                 } else {
-                    return { rows: 0, error: 2 };
+                    return { error:true,message:e };
                 }
             }
         } else {
@@ -145,9 +150,9 @@ class InspeccionModel {
             } catch (e) {
                 console.log(e);
                 if (e.code == "ER_DUP_ENTRY") {
-                    return { rows: 0, error: 1 };
+                    return { error: true,message:{sqlMessage:"La acta ya existe"} };
                 } else {
-                    return { rows: 0, error: 2 };
+                    return { error:true,message:e };
                 }
             }
         }
@@ -160,8 +165,6 @@ class InspeccionModel {
 
     update = async (params, id) => {
         try {
-
-
             const { columnSet, values } = multipleColumnSet(params)
             //Update horometro
             const horometro = params.horometroActual;
@@ -177,12 +180,30 @@ class InspeccionModel {
             const result = await query(sql, [...values, id]);
             return id;
         } catch (e) {
+            
             console.log(e);
-            return null;
+            if (e.code == "ER_DUP_ENTRY") {
+                return { error: true,message:{sqlMessage:"La acta ya existe"} };
+            } else {
+                return { error:true,message:e };
+            }
+            
+          
         }
     }
 
-
+    delete = async (id) => {
+        try {
+            const sql = `DELETE FROM ${this.tableName}
+        WHERE idInspeccion = ?`;
+            const result = await query(sql, [id]);
+            const affectedRows = result ? result.affectedRows : 0;
+            return affectedRows;
+        } catch (e) {
+            console.log(e)
+            return { error: true, message: {sqlMessage:"La acta no existe"} };
+        }
+    }
 }
 
 module.exports = new InspeccionModel;

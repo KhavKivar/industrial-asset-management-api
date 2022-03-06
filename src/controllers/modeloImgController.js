@@ -18,64 +18,53 @@ class ModeloImgController {
         if (!ImgList.length) {
             res.send([]);
         }
-        else{
+        else {
             res.send(ImgList);
         }
-        
+
     };
 
     createImg = async (req, res, next) => {
 
         console.log(req.body);
-        const result  = await ModelImgModel.create(req.body);
-        if (result.error ==0) {
-            res.status(201).send("Img creado con exito");
-        }else{
-            if(result.error == 1){
-                res.status(505).send("El modelo ya tiene una imagen asociada");
-            }else{
-                res.status(505).send("Error desconocido");
-            }
+        const result = await ModelImgModel.create(req.body);
+        if (result.error == true) {
+            res.status(505).send(result);
+        } else {
+            res.status(200).send("Img creado con exito");
         }
-      
+
     };
 
-    updateImg =  async (req, res, next) => {
-        
-       
+    updateImg = async (req, res, next) => {
         const result = await ModelImgModel.update(req.body, req.params.id);
-
-        if (!result) {
-            throw new HttpException(404, 'Something went wrong');
+        if (result.error == true) {
+            res.status(505).send(result);
+        } else {
+            const { affectedRows, changedRows, info } = result;
+            const message = !affectedRows ? 'User not found' :
+                affectedRows && changedRows ? 'User updated successfully' : 'Updated faild';
+            res.status(200).send({ message, info });
         }
-
-        const { affectedRows, changedRows, info } = result;
-
-        const message = !affectedRows ? 'User not found' :
-            affectedRows && changedRows ? 'User updated successfully' : 'Updated faild';
-
-        res.send({ message, info });
-
-       
     };
 
 
 
-    removeImgById =  async (req, res, next) => {
- 
+    removeImgById = async (req, res, next) => {
+
         const result = await ModelImgModel.delete(req.params.id);
-        if (!result) {
-            res.send('img not found');
-           
-        }else{
-            res.send('IMG eliminado');
+        if (result.error ==true) {
+            res.status(505).send(result);
+            
+        } else {
+            res.status(200).send('IMG eliminado');
         }
-       
+
     };
 
 
 
-    
+
 }
 
 

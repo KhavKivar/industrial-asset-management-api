@@ -9,11 +9,9 @@ const dotenv = require('dotenv');
 
 
 class movimientoController{
-    
     getAll = async (req, res, next) => {
         let movimientoList = await MovimientoModel.find();
         console.log(movimientoList);
-
         if (!movimientoList.length) {
             res.send([]);
         }else{
@@ -22,52 +20,34 @@ class movimientoController{
        
     };
 
-
     create = async (req, res, next) => {
-
         console.log(req.body);
         const result  = await MovimientoModel.create(req.body);
-        if (result.error ==0) {
-            const movimiento = await MovimientoModel.find({idInspeccion:req.body.idInspeccion});
-
-            res.status(201).send(movimiento[0]);
+        if (result.error == true) {
+            res.status(505).send(result);
         }else{
-            if(result.error == 1){
-                res.status(505).send("La id ya existe");
-            }else{
-                res.status(505).send("Error desconocido");
-            }
+            const movimiento = await MovimientoModel.find({idInspeccion:req.body.idInspeccion});
+            res.status(200).send(movimiento[0]);
         }
-      
     };
 
     update =  async (req, res, next) => {
-        
-       
         const result = await MovimientoModel.update(req.body, req.params.id);
-
-        if (!result) {
-            res.send("ERROR");
+        if (result.error ==true) {
+            res.status(505).send(result);
         }else{
-            const { affectedRows, changedRows, info } = result;
             const movimiento = await MovimientoModel.find({idMovimiento:req.params.id});
-
-            res.send(movimiento[0]);
+            res.status(200).send(movimiento[0]);
         }
-
-       
-
-       
     };
 
     remove =  async (req, res, next) => {
  
         const result = await MovimientoModel.delete(req.params.id);
-        if (!result) {
-            res.send('Mov not found');
-           
+        if (result.error == true) {
+            res.status(505).send('El movimiento no existe');
         }else{
-            res.send('Mov eliminado');
+            res.status(200).send('Movimiento eliminado');
         }
        
     };

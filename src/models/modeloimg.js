@@ -32,43 +32,56 @@ class ModelImgModel {
         return result[0];
     }
 
-    create = async ({modelo,url}) => {
+    create = async ({ modelo, url }) => {
         const sql = `INSERT INTO ${this.tableName}
         ( modelo, url) VALUES (?,?)`;
         try {
 
-            const result = await query(sql, [modelo,url]);
+            const result = await query(sql, [modelo, url]);
             let affectedRows = result ? result.affectedRows : 0;
             return { rows: affectedRows, error: 0 };
         } catch (e) {
-            console.log(e);
             if (e.code == "ER_DUP_ENTRY") {
-
-                return { rows: 0, error: 1 };
+                return { message: { sqlMessage: "La imagen ya existe" }, error: true };
             } else {
-                return { rows: 0, error: 2 };
+                return { message: e, error: true };
             }
         }
 
     }
 
     update = async (params, id) => {
-        const { columnSet, values } = multipleColumnSet(params)
+        try {
+            const { columnSet, values } = multipleColumnSet(params)
 
-        const sql = `UPDATE  ${this.tableName} SET ${columnSet} WHERE modelo = ?`;
+            const sql = `UPDATE  ${this.tableName} SET ${columnSet} WHERE modelo = ?`;
 
-        const result = await query(sql, [...values, id]);
+            const result = await query(sql, [...values, id]);
 
-        return result;
+            return result;
+        }
+        catch (e) {
+            if (e.code == "ER_DUP_ENTRY") {
+                return { message: { sqlMessage: "La imagen ya existe" }, error: true };
+            } else {
+                return { message: e, error: true };
+            }
+        }
     }
 
     delete = async (rut) => {
-        const sql = `DELETE FROM ${this.tableName}
+        try {
+            const sql = `DELETE FROM ${this.tableName}
         WHERE modelo = ?`;
-        const result = await query(sql, [rut]);
-        const affectedRows = result ? result.affectedRows : 0;
+            const result = await query(sql, [rut]);
+            const affectedRows = result ? result.affectedRows : 0;
 
-        return affectedRows;
+            return affectedRows;
+        } catch (e) {
+            console.log(e)
+            return { error: true, message: { sqlMessage: "La imagen ya existe" } };
+
+        }
     }
 
 }
