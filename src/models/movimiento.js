@@ -9,7 +9,7 @@ class MovimientoModel {
     tableName = 'movimiento';
 
     find = async (params = {}) => {
-        let sql = `SELECT * FROM ${this.tableName}`;
+        let sql = `SELECT * FROM ${this.tableName} order by fechaMov DESC`;
 
         if (!Object.keys(params).length) {
             return await query(sql);

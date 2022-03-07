@@ -9,7 +9,7 @@ class InspeccionModel {
 
     find = async (params = {}) => {
         try {
-            let sql = `SELECT * FROM ${this.tableName}`;
+            let sql = `SELECT * FROM ${this.tableName} order by ts DESC`;
             if (!Object.keys(params).length) {
                 return await query(sql);
             }
