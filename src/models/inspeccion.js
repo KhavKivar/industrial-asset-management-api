@@ -13,11 +13,11 @@ class InspeccionModel {
             if (!Object.keys(params).length) {
                 return await query(sql);
             }
-
+            let sql2 = `SELECT * FROM ${this.tableName}`;
             const { columnSet, values } = multipleColumnSet(params)
-            sql += ` WHERE ${columnSet}`;
+            sql2 += ` WHERE ${columnSet}`;
 
-            return await query(sql, [...values]);
+            return await query(sql2, [...values]);
         } catch (e) {
             return [];
         }
@@ -48,14 +48,15 @@ class InspeccionModel {
         inclinacion, levante, motor, nivelAceiteHidraulico, nivelAceiteMotor, nivelAceiteTransmision, nivelLiquinoFreno,
         joystick, serieCargador, cargadorVoltaje, enchufe,
         tapaCombustible, tapaRadiador, transmision, observacion,
-        alturaLevante, carga, cilindroDeGas, bateriaObservaciones, serieCargardorText, cargadorVoltajeInfo, enchufeInfo,
-        horometroActual,
+        alturaLevante, carga, conAlarma, conExtintor, conEspejos,
+        conFocosDelanteros, conFocosTraseros, conLLave, cilindroDeGas, bateriaObservaciones, serieCargardorText, cargadorVoltajeInfo, enchufeInfo,
+        horometroActual, mastilEquipo,
 
         firmaURL, rut, nombre
 
     }) => {
         if (tipo == 'acta_equipo') {
-           
+
             const sql = `INSERT INTO ${this.tableName}
             (tipo, alarmaRetroceso, asientoOperador, baliza, idEquipo, bocina, extintor,espejos,cantidadEspejos,
                 focosFaenerosDelanteros,cantidadFocosFaenerosDelanteros,focosFaenerosTraseros,cantidadFocosFaenerosTraseros,
@@ -65,10 +66,13 @@ class InspeccionModel {
                 alternador,bateria,chapaContacto,sistemaElectrico,horometro,motorPartida,palancaComando,switchLuces,switchMarcha,cadena,
                 carro,horquilla,jaula,llantas,mastil,pintura,rueda,cantidadRueda,desplazadorLateral,direccion,frenoMano,frenoPie,
                 inclinacion, levante, motor, nivelAceiteHidraulico, nivelAceiteMotor, nivelAceiteTransmision, nivelLiquinoFreno,
-                tapaCombustible, tapaRadiador,transmision,observacion,alturaLevante,carga,cilindroDeGas,horometroActual, firmaURL, rut, nombre
+                tapaCombustible, tapaRadiador,transmision,observacion,alturaLevante,carga,conAlarma,conExtintor,conEspejos,
+                conFocosDelanteros,conFocosTraseros,conLLave,
+                cilindroDeGas,horometroActual,mastilEquipo,
+                 firmaURL, rut, nombre
                 ) VALUES (?,?,?,?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?,?,     ?,?,?,?,?,?,?,?,?,?,
                           ?,?,?,?,?,?,?,?,?,?,   ?,?,?,?,?,?,?,?,?,?,     ?,?,?,?,?,?,?,?,?,?,
-                          ?,?,?,?,?,?,?,?,?
+                          ?,?,?,?,?,?,?,?,?  ,?,?,?,?,?,?,?
                     
                     )`;
 
@@ -82,7 +86,10 @@ class InspeccionModel {
                     alternador, bateria, chapaContacto, sistemaElectrico, horometro, motorPartida, palancaComando, switchLuces, switchMarcha, cadena,
                     carro, horquilla, jaula, llantas, mastil, pintura, rueda, cantidadRueda, desplazadorLateral, direccion, frenoMano, frenoPie,
                     inclinacion, levante, motor, nivelAceiteHidraulico, nivelAceiteMotor, nivelAceiteTransmision, nivelLiquinoFreno,
-                    tapaCombustible, tapaRadiador, transmision, observacion, alturaLevante, carga, cilindroDeGas, horometroActual, firmaURL, rut, nombre]);
+                    tapaCombustible, tapaRadiador, transmision, observacion, alturaLevante, carga, conAlarma, conExtintor, conEspejos,
+                    conFocosDelanteros, conFocosTraseros, conLLave,
+                    cilindroDeGas, horometroActual, mastilEquipo,
+                    firmaURL, rut, nombre]);
                 //update horometro equipo
 
                 const sqlUpdate = `UPDATE equipo SET horometro=(?) where idEquipo= (?) and horometro < (?)`;
@@ -94,9 +101,9 @@ class InspeccionModel {
             } catch (e) {
                 console.log(e);
                 if (e.code == "ER_DUP_ENTRY") {
-                    return { error: true,message:{sqlMessage:"La acta ya existe"} };
+                    return { error: true, message: { sqlMessage: "La acta ya existe" } };
                 } else {
-                    return { error:true,message:e };
+                    return { error: true, message: e };
                 }
             }
         } else {
@@ -110,12 +117,16 @@ class InspeccionModel {
               bateria,chapaContacto,sistemaElectrico,horometro,palancaComando,switchLuces,switchMarcha,joystick,cadena,
                 carro,horquilla,jaula,llantas,mastil,pintura,rueda,cantidadRueda,desplazadorLateral,direccion,frenoMano,frenoPie,
                 inclinacion, levante,serieCargador, nivelAceiteHidraulico, nivelLiquinoFreno,cargadorVoltaje,enchufe,
-                    observacion,alturaLevante,carga,bateriaObservaciones,serieCargardorText,cargadorVoltajeInfo,enchufeInfo,horometroActual, firmaURL, rut, nombre
+                    observacion,alturaLevante,carga,
+                    conAlarma,conExtintor,conEspejos,
+                    conFocosDelanteros,conFocosTraseros,conLLave,
+                    bateriaObservaciones,serieCargardorText,cargadorVoltajeInfo,
+                    enchufeInfo,horometroActual,mastilEquipo, firmaURL, rut, nombre
 
 
                 ) VALUES (?,?,?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?,?,     ?,?,?,?,?,?,?,?,?,?,
                           ?,?,?,?,?,?,?,?,?,?,   ?,?,?,?,?,?,?,?,?,?,     ?,?,?,?,?,?,?,?,?,?,
-                         ?,?,?,?,?,?,?,?
+                         ?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?
                     
                     )`;
 
@@ -133,15 +144,20 @@ class InspeccionModel {
                 for (var i in x) {
                     console.log(i, x[i]);
                 }
-                const result = await query(sql, [tipo, alarmaRetroceso, asientoOperador, baliza, idEquipo, bocina, extintor, espejos, cantidadEspejos,
-                    focosFaenerosDelanteros, cantidadFocosFaenerosDelanteros, focosFaenerosTraseros, cantidadFocosFaenerosTraseros,
+                const result = await query(sql, [tipo, alarmaRetroceso, asientoOperador, baliza, idEquipo, bocina, extintor, espejos, cantidadEspejos, focosFaenerosDelanteros,
+
+                    cantidadFocosFaenerosDelanteros, focosFaenerosTraseros, cantidadFocosFaenerosTraseros,
                     llaveContacto, cantidadLlaveContacto, intermitentesDelanteros, cantidadIntermitentesDelanteros, intermitentesTraseros,
                     cantidadIntermitentesTraseros, palancaFrenoMano, peraVolante, tableroIntrumentos, cilindroDesplazador,
                     cilindroDireccion, cilindroLevanteCentral, cilindroInclinacion, cilindroLevanteLateral, flexibleHidraulico, fugaConectores,
                     bateria, chapaContacto, sistemaElectrico, horometro, palancaComando, switchLuces, switchMarcha, joystick, cadena,
                     carro, horquilla, jaula, llantas, mastil, pintura, rueda, cantidadRueda, desplazadorLateral, direccion, frenoMano, frenoPie,
                     inclinacion, levante, serieCargador, nivelAceiteHidraulico, nivelLiquinoFreno, cargadorVoltaje, enchufe,
-                    observacion, alturaLevante, carga, bateriaObservaciones, serieCargardorText, cargadorVoltajeInfo, enchufeInfo, horometroActual, firmaURL, rut, nombre]);
+                    observacion, alturaLevante, carga,
+                    conAlarma, conExtintor, conEspejos,
+                    conFocosDelanteros, conFocosTraseros, conLLave,
+                    bateriaObservaciones, serieCargardorText, cargadorVoltajeInfo,
+                    enchufeInfo, horometroActual, mastilEquipo, firmaURL, rut, nombre]);
                 const sqlUpdate = `UPDATE equipo SET horometro=(?) where idEquipo= (?) and horometro < (?)`;
                 const resultUpdate = await query(sqlUpdate, [horometroActual, idEquipo, horometroActual]);
 
@@ -150,9 +166,9 @@ class InspeccionModel {
             } catch (e) {
                 console.log(e);
                 if (e.code == "ER_DUP_ENTRY") {
-                    return { error: true,message:{sqlMessage:"La acta ya existe"} };
+                    return { error: true, message: { sqlMessage: "La acta ya existe" } };
                 } else {
-                    return { error:true,message:e };
+                    return { error: true, message: e };
                 }
             }
         }
@@ -180,15 +196,15 @@ class InspeccionModel {
             const result = await query(sql, [...values, id]);
             return id;
         } catch (e) {
-            
+
             console.log(e);
             if (e.code == "ER_DUP_ENTRY") {
-                return { error: true,message:{sqlMessage:"La acta ya existe"} };
+                return { error: true, message: { sqlMessage: "La acta ya existe" } };
             } else {
-                return { error:true,message:e };
+                return { error: true, message: e };
             }
-            
-          
+
+
         }
     }
 
@@ -201,7 +217,7 @@ class InspeccionModel {
             return affectedRows;
         } catch (e) {
             console.log(e)
-            return { error: true, message: {sqlMessage:"La acta no existe"} };
+            return { error: true, message: { sqlMessage: "La acta no existe" } };
         }
     }
 }

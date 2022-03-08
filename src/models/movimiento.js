@@ -14,11 +14,11 @@ class MovimientoModel {
         if (!Object.keys(params).length) {
             return await query(sql);
         }
-
+        let sql2 = `SELECT * FROM ${this.tableName}`;
         const { columnSet, values } = multipleColumnSet(params)
-        sql += ` WHERE ${columnSet}`;
+        sql2 += ` WHERE ${columnSet}`;
 
-        return await query(sql, [...values]);
+        return await query(sql2, [...values]);
     }
 
 

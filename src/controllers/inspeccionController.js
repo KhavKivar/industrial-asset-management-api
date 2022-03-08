@@ -12,6 +12,7 @@ class inspeccionController {
 
     getAll = async (req, res, next) => {
         let inspeccionList = await InspeccionModel.find();
+        
         if (!inspeccionList.length) {
             res.send([]);
         } else {
@@ -34,7 +35,7 @@ class inspeccionController {
 
 
     create = async (req, res, next) => {
-
+        console.log(req.body);
         const result = await InspeccionModel.create(req.body);
         if (result.error == true) {
             res.status(505).send(result.message);
@@ -47,6 +48,7 @@ class inspeccionController {
     };
 
     edit = async (req, res, next) => {
+        console.log(req.body);
 
 
         const result = await InspeccionModel.update(req.body, req.params.id);

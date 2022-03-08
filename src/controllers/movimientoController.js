@@ -26,7 +26,8 @@ class movimientoController{
         if (result.error == true) {
             res.status(505).send(result);
         }else{
-            const movimiento = await MovimientoModel.find({idInspeccion:req.body.idInspeccion});
+    
+            const movimiento = await MovimientoModel.find({idMovimiento:result.id});
             res.status(200).send(movimiento[0]);
         }
     };
