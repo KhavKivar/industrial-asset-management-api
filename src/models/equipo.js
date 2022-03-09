@@ -39,13 +39,16 @@ class EquipoModel {
         return result[0];
     }
 
-    create = async ({ idEquipo, tipo, marca, modelo, serie, capacidad, mastil = "", altura = 0, ano, horometro, precio_neto }) => {
+    create = async ({ idEquipo, tipo, marca, modelo, serie, capacidad, mastil = "", altura = 0, ano, horometro, 
+    estado='DISPONIBLE',ubicacion='Bodega central',precio_neto }) => {
         const sql = `INSERT INTO ${this.tableName}
-        (idEquipo, tipo, marca, modelo, serie, capacidad, mastil,altura,ano,horometro,precio_neto) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
+        (idEquipo, tipo, marca, modelo, serie, capacidad, mastil,altura,ano,horometro,estado,ubicacion,
+            precio_neto) VALUES (?,?,?,?,?,   ?,?,?,?,?, ?,?,?)`;
 
         try {
 
-            const result = await query(sql, [idEquipo, tipo, marca, modelo, serie, capacidad, mastil, altura, ano, horometro, precio_neto]);
+            const result = await query(sql, [idEquipo, tipo, marca, modelo, serie, capacidad, mastil,altura,ano
+                ,horometro,estado,ubicacion,precio_neto]);
             let affectedRows = result ? result.affectedRows : 0;
             return { rows: affectedRows, error: 0 };
         } catch (e) {
