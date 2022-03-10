@@ -41,10 +41,8 @@ class ClienteController {
         if (result.error == true) {
             res.status(505).send(result);
         } else {
-            const { affectedRows, changedRows, info } = result;
-            const message = !affectedRows ? 'User not found' :
-                affectedRows && changedRows ? 'User updated successfully' : 'Updated faild';
-            res.status(200).send({ message, info });
+            const cliente = await ClienteModel.findOne({ rut: req.param.id });
+            res.status(200).send(cliente);
         }
 
     };

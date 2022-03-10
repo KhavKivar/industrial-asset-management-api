@@ -11,7 +11,7 @@ const dotenv = require('dotenv');
 class movimientoController{
     getAll = async (req, res, next) => {
         let movimientoList = await MovimientoModel.find();
-        console.log(movimientoList);
+      
         if (!movimientoList.length) {
             res.send([]);
         }else{

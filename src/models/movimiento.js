@@ -3,7 +3,8 @@ const query = require('../db/db_connection');
 const { multipleColumnSet } = require('../utils/commonUtils');
 
 
-
+const EquipoModel = require('./equipo');
+const InspeccionModel = require('./inspeccion');
 const ClienteModel = require('./cliente');
 class MovimientoModel {
     tableName = 'movimiento';
@@ -35,6 +36,14 @@ class MovimientoModel {
             if (cliente == undefined) {
                 ClienteModel.create({ rut: rut, nombre: "" });
             }
+            
+            if(tipo == 'ENVIO' && observaciones == 'Venta'){
+                //Actualizar el equipo
+                console.log("entro");
+                const acta = await InspeccionModel.findOne({ idInspeccion: idInspeccion });
+                const equipo = await EquipoModel.update({estado:'VENDIDO'},acta.idEquipo);
+            }
+
             const result = await query(sql, [transporte,
                 idInspeccion, rut, idGuiaDespacho, urlGuiaDespacho, cambio, tipo, observaciones, fechaRetiro]);
             return { error: false, id: result.insertId };
@@ -52,7 +61,7 @@ class MovimientoModel {
     update = async (params, id) => {
         try {
             const { columnSet, values } = multipleColumnSet(params)
-            console.log(params);
+           
             const cliente = await ClienteModel.findOne({ rut: params.rut });
             if (cliente == undefined) {
                 ClienteModel.create({ rut: params.rut, nombre: "" });

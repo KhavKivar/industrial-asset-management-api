@@ -40,7 +40,7 @@ class EquipoModel {
     }
 
     create = async ({ idEquipo, tipo, marca, modelo, serie, capacidad, mastil = "", altura = 0, ano, horometro, 
-    estado='DISPONIBLE',ubicacion='Bodega central',precio_neto }) => {
+    estado='SIN INFORMACION',ubicacion='Taller',precio_neto }) => {
         const sql = `INSERT INTO ${this.tableName}
         (idEquipo, tipo, marca, modelo, serie, capacidad, mastil,altura,ano,horometro,estado,ubicacion,
             precio_neto) VALUES (?,?,?,?,?,   ?,?,?,?,?, ?,?,?)`;
