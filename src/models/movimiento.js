@@ -36,13 +36,43 @@ class MovimientoModel {
             if (cliente == undefined) {
                 ClienteModel.create({ rut: rut, nombre: "" });
             }
-            
-            if(tipo == 'ENVIO' && observaciones == 'Venta'){
-                //Actualizar el equipo
-                console.log("entro");
-                const acta = await InspeccionModel.findOne({ idInspeccion: idInspeccion });
-                const equipo = await EquipoModel.update({estado:'VENDIDO'},acta.idEquipo);
+
+
+            let estado = 'ARRENDADO';
+            //&& observaciones == 'Venta'
+            switch (observaciones) {
+                case 'Venta':
+                    estado = 'VENDIDO';
+                    break;
+                case 'Nuevo Arriendo':
+                    estado = 'ARRENDADO';
+                    break;
+                case 'Termino Arriendo':
+                    estado = 'DISPONIBLE';
+                    break;
+                case 'Despacho Por Cambio':
+                    estado = 'ARRENDADO';
+                    break;
+                case 'Despacho Por Reparacion':
+                    estado = 'ARRENDADO';
+                    break;
+                case 'Retiro Por Cambio':
+                    estado = 'DISPONIBLE';
+                    break;
+                case 'Retiro Por Reparacion':
+                    estado = 'DISPONIBLE';
+                    break;
+                default:
+                    estado = 'NO UPDATE';
+                    break;
+
             }
+            if (estado != 'NO UPDATE') {
+                const acta = await InspeccionModel.findOne({ idInspeccion: idInspeccion });
+                const equipo = await EquipoModel.update({ estado: estado }, acta.idEquipo);
+            }
+
+
 
             const result = await query(sql, [transporte,
                 idInspeccion, rut, idGuiaDespacho, urlGuiaDespacho, cambio, tipo, observaciones, fechaRetiro]);
@@ -50,7 +80,7 @@ class MovimientoModel {
         } catch (e) {
             console.log(e);
             if (e.code == "ER_DUP_ENTRY") {
-                return { error: true, message: {sqlMessage:"El movimiento ya existe" }};
+                return { error: true, message: { sqlMessage: "El movimiento ya existe" } };
             } else {
                 return { error: true, message: e };
             }
@@ -61,10 +91,51 @@ class MovimientoModel {
     update = async (params, id) => {
         try {
             const { columnSet, values } = multipleColumnSet(params)
-           
+
             const cliente = await ClienteModel.findOne({ rut: params.rut });
             if (cliente == undefined) {
                 ClienteModel.create({ rut: params.rut, nombre: "" });
+            }
+
+
+
+            if (params.observaciones != undefined && params.observaciones != null) {
+                let estado = 'ARRENDADO';
+                //&& observaciones == 'Venta'
+                switch (params.observaciones) {
+                    case 'Venta':
+                        estado = 'VENDIDO';
+                        break;
+                    case 'Nuevo Arriendo':
+                        estado = 'ARRENDADO';
+                        break;
+                    case 'Termino Arriendo':
+                        estado = 'DISPONIBLE';
+                        break;
+                    case 'Despacho Por Cambio':
+                        estado = 'ARRENDADO';
+                        break;
+                    case 'Despacho Por Reparacion':
+                        estado = 'ARRENDADO';
+                        break;
+                    case 'Retiro Por Cambio':
+                        estado = 'DISPONIBLE';
+                        break;
+                    case 'Retiro Por Reparacion':
+                        estado = 'DISPONIBLE';
+                        break;
+                    default:
+                        estado = 'NO UPDATE';
+                        break;
+                }
+                if (estado != 'NO UPDATE') {
+                    if(params.idInspeccion != undefined && params.idInspeccion != null){
+                        const acta = await InspeccionModel.findOne({ idInspeccion: params.idInspeccion });
+                        const equipo = await EquipoModel.update({ estado: estado }, acta.idEquipo);
+                    }
+                   
+                }
+
             }
 
             const sql = `UPDATE ${this.tableName} SET ${columnSet} WHERE idMovimiento = ?`;
@@ -72,10 +143,12 @@ class MovimientoModel {
             const result = await query(sql, [...values, id]);
 
             return result;
+
+
         } catch (e) {
             console.log(e);
             if (e.code == "ER_DUP_ENTRY") {
-                return { error: true, message: {sqlMessage:"El movimiento ya existe" }};
+                return { error: true, message: { sqlMessage: "El movimiento ya existe" } };
             } else {
                 return { error: true, message: e };
             }
@@ -91,7 +164,7 @@ class MovimientoModel {
             return affectedRows;
         } catch (e) {
             console.log(e)
-            return {error:true,message:{sqlMessage:"El movimiento no existe"}};
+            return { error: true, message: { sqlMessage: "El movimiento no existe" } };
 
         }
     }

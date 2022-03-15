@@ -24,6 +24,8 @@ class InfoModel {
         listOfUpdate.push(lastUpdate[3]);
         listOfUpdate.push(lastUpdate[4]);
 
+        listOfUpdate.push(lastUpdate[0]);
+
 
         return listOfUpdate ;
     }
