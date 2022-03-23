@@ -39,28 +39,36 @@ class MovimientoModel {
 
 
             let estado = 'ARRENDADO';
+            let ubicacion = 'Taller';
             //&& observaciones == 'Venta'
             switch (observaciones) {
                 case 'Venta':
                     estado = 'VENDIDO';
+                    ubicacion = '-';
                     break;
                 case 'Nuevo Arriendo':
                     estado = 'ARRENDADO';
+                    ubicacion = 'Actualizar';
                     break;
                 case 'Termino Arriendo':
                     estado = 'DISPONIBLE';
+                    ubicacion = 'Taller';
                     break;
                 case 'Despacho Por Cambio':
+                    ubicacion = 'Actualizar';
                     estado = 'ARRENDADO';
                     break;
                 case 'Despacho Por Reparacion':
+                    ubicacion = 'Actualizar';
                     estado = 'ARRENDADO';
                     break;
                 case 'Retiro Por Cambio':
                     estado = 'DISPONIBLE';
+                    ubicacion = 'Taller';
                     break;
                 case 'Retiro Por Reparacion':
                     estado = 'DISPONIBLE';
+                    ubicacion = 'Taller';
                     break;
                 default:
                     estado = 'NO UPDATE';
@@ -69,7 +77,7 @@ class MovimientoModel {
             }
             if (estado != 'NO UPDATE') {
                 const acta = await InspeccionModel.findOne({ idInspeccion: idInspeccion });
-                const equipo = await EquipoModel.update({ estado: estado }, acta.idEquipo);
+                const equipo = await EquipoModel.update({ estado: estado,ubicacion:ubicacion }, acta.idEquipo);
             }
 
 
@@ -101,28 +109,36 @@ class MovimientoModel {
 
             if (params.observaciones != undefined && params.observaciones != null) {
                 let estado = 'ARRENDADO';
+                let ubicacion = 'Taller';
                 //&& observaciones == 'Venta'
                 switch (params.observaciones) {
                     case 'Venta':
                         estado = 'VENDIDO';
+                        ubicacion = '-';
                         break;
                     case 'Nuevo Arriendo':
                         estado = 'ARRENDADO';
+                        ubicacion = 'Actualizar';
                         break;
                     case 'Termino Arriendo':
                         estado = 'DISPONIBLE';
+                        ubicacion = 'Taller';
                         break;
                     case 'Despacho Por Cambio':
                         estado = 'ARRENDADO';
+                        ubicacion = 'Actualizar'
                         break;
                     case 'Despacho Por Reparacion':
                         estado = 'ARRENDADO';
+                        ubicacion = 'Actualizar'
                         break;
                     case 'Retiro Por Cambio':
                         estado = 'DISPONIBLE';
+                        ubicacion = 'Taller';
                         break;
                     case 'Retiro Por Reparacion':
                         estado = 'DISPONIBLE';
+                        ubicacion = 'Taller';
                         break;
                     default:
                         estado = 'NO UPDATE';
@@ -130,8 +146,9 @@ class MovimientoModel {
                 }
                 if (estado != 'NO UPDATE') {
                     if(params.idInspeccion != undefined && params.idInspeccion != null){
+
                         const acta = await InspeccionModel.findOne({ idInspeccion: params.idInspeccion });
-                        const equipo = await EquipoModel.update({ estado: estado }, acta.idEquipo);
+                        const equipo = await EquipoModel.update({ estado: estado,ubicacion:ubicacion }, acta.idEquipo);
                     }
                    
                 }

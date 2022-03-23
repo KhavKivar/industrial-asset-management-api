@@ -27,7 +27,9 @@ class ClienteController {
     createCliente = async (req, res, next) => {
 
         const result = await ClienteModel.create(req.body);
+       
         if (result.error == true) {
+            console.log(result);
             res.status(505).send(result);
         } else {
             res.status(200).send("Cliente creado con exito");
