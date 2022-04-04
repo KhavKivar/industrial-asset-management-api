@@ -65,9 +65,18 @@ class inspeccionController {
     remove =  async (req, res, next) => {
         const result = await InspeccionModel.delete(req.params.id);
         if (result.error == true) {
-            res.status(505).send(result);
+            try{
+                if("ER_ROW_IS_REFERENCED_2" == result.message.sqlMessage.code){
+                    res.status(505).send({"message":"No se puede eliminar la acta porque esta siendo utilizada por otra tabla"});
+                }else{
+                    res.status(505).send(result);
+                }
+            }catch(e){
+                res.status(505).send(result);
+            }
+           
         }else{
-            res.status(200).send('Acta eliminada');
+            res.status(200).send({'message':'Acta eliminada'});
         }
        
     };

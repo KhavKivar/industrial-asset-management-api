@@ -190,11 +190,16 @@ class InspeccionModel {
             const sql = `DELETE FROM ${this.tableName}
         WHERE idInspeccion = ?`;
             const result = await query(sql, [id]);
+
             const affectedRows = result ? result.affectedRows : 0;
+        
+            if(affectedRows == 0){
+                return { error: true, message: { sqlMessage: result }};
+            }   
             return affectedRows;
         } catch (e) {
-            console.log(e)
-            return { error: true, message: { sqlMessage: "La acta no existe" } };
+            console.log(e);
+            return { error: true, message: { sqlMessage: e} };
         }
     }
 }

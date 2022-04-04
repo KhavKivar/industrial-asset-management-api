@@ -34,6 +34,7 @@ class movimientoController{
 
     update =  async (req, res, next) => {
         const result = await MovimientoModel.update(req.body, req.params.id);
+        console.log(req.body);
         if (result.error ==true) {
             res.status(505).send(result);
         }else{
