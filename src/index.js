@@ -91,10 +91,7 @@ app.all('*', (req, res, next) => {
 //httpsServer.listen(8443);
 
 
-var options = {
-  key: fs.readFileSync('client-key.pem'),
-  cert: fs.readFileSync('client-cert.pem')
-};
+
 
 
 app.listen(app.get('port'), () => {
@@ -102,8 +99,8 @@ app.listen(app.get('port'), () => {
 });
 
 // Create an HTTP service.
-http.createServer(app).listen(80);
+
 // Create an HTTPS service identical to the HTTP service.
-https.createServer(options, app).listen(443);
+
 
   
