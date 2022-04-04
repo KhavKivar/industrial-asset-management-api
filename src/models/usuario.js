@@ -110,7 +110,7 @@ class usuarioModel {
 
     create = async ({ nombre, password,role }) => {
         const sql = `INSERT INTO ${this.tableName}
-        ( nombre, password,role) VALUES (?,?,?)`;
+        ( nombre, password) VALUES (?,?)`;
         try {
             const password_encrypt = CryptoUtils.encrypt(password);
             const result = await query(sql, [nombre, password_encrypt,role]);
