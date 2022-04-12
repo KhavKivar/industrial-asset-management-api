@@ -25,11 +25,11 @@ class MovimientoModel {
 
 
     create = async ({ transporte, empresaEnvio,
-        idInspeccion, rut, idGuiaDespacho, urlGuiaDespacho, cambio, tipo, observaciones, fechaRetiro }) => {
+        idInspeccion, rut, idGuiaDespacho, urlGuiaDespacho, cambio, tipo, observaciones, fechaRetiro,fechaMov }) => {
         const sql = `INSERT INTO ${this.tableName}
         ( transporte,
-            idInspeccion,rut,idGuiaDespacho,urlGuiaDespacho,cambio,tipo,observaciones,fechaRetiro)
-         VALUES (?,?,?,?,?,?,?,?,?)`;
+            idInspeccion,rut,idGuiaDespacho,urlGuiaDespacho,cambio,tipo,observaciones,fechaRetiro,fechaMov)
+         VALUES (?,?,?,?,?,?,?,?,?,?)`;
         try {
             //Check if rut exist
             const cliente = await ClienteModel.findOne({ rut: rut });
@@ -83,7 +83,7 @@ class MovimientoModel {
 
 
             const result = await query(sql, [transporte,
-                idInspeccion, rut, idGuiaDespacho, urlGuiaDespacho, cambio, tipo, observaciones, fechaRetiro]);
+                idInspeccion, rut, idGuiaDespacho, urlGuiaDespacho, cambio, tipo, observaciones, fechaRetiro,fechaMov]);
             return { error: false, id: result.insertId };
         } catch (e) {
             console.log(e);
