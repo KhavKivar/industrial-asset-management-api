@@ -8,6 +8,9 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const { sendMessage } = require('../utils/socket-io');
+
+
 /******************************************************************************
  *                              Equipo Controller
  ******************************************************************************/
@@ -41,7 +44,10 @@ class EquipoController {
         if (result.error == true) {
             res.status(505).send(result);
         }else{
-            res.status(200).send("Equipo creado con exito");  
+     
+            const equipo = await EquipoModel.findOne({ idEquipo: req.body.idEquipo });
+            sendMessage("new equipo", equipo);
+            res.status(200).send(equipo);  
         }
       
     };
@@ -51,12 +57,12 @@ class EquipoController {
         const result = await EquipoModel.update(req.body, req.params.id);
         console.log(result.error);
         if (result.error == true) {
-            res.status(505).send(result);
-        }else{
-            const { affectedRows, changedRows, info } = result;
-            const message = !affectedRows ? 'User not found' :
-                affectedRows && changedRows ? 'User updated successfully' : 'Updated faild';
-            res.status(200).send({ message, info });
+            res.status(505).send(result);   
+        }else{  
+            const equipo = await EquipoModel.findOne({ idEquipo: req.params.id});
+            sendMessage("edit equipo", equipo);
+            
+            res.status(200).send(equipo);
         }
     };
 
@@ -67,8 +73,8 @@ class EquipoController {
         const result = await EquipoModel.delete(req.params.id);
         if (result.error == true) {
             res.status(505).send(result);
-           
         }else{
+            sendMessage("remove equipo", req.params.id);
             res.status(200).send('Equipo eliminado');
         }
        

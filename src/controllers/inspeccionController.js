@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
+const { sendMessage } = require('../utils/socket-io');
 
 class inspeccionController {
 
@@ -42,6 +43,7 @@ class inspeccionController {
         } else {
             console.log(result);
             const inspeccion = await InspeccionModel.findOne({ idInspeccion: result.id });
+            sendMessage("new acta", inspeccion);
             res.status(200).send(inspeccion);
         }
 
@@ -58,6 +60,7 @@ class inspeccionController {
         }
         else {
             const inspeccion = await InspeccionModel.findOne({ idInspeccion: result });
+            sendMessage("edit acta", inspeccion);
             res.status(200).send(inspeccion);
         }
 
@@ -76,6 +79,7 @@ class inspeccionController {
             }
            
         }else{
+            sendMessage("remove acta", req.params.id);
             res.status(200).send({'message':'Acta eliminada'});
         }
        

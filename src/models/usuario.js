@@ -58,7 +58,7 @@ class usuarioModel {
             const isValid = await this.userHasToken({nombre:nombre}) ;
             if (isValid.isHas) {
                 if(isValid.token == token){
-                    console.log(isValid);
+                   
                     return { error: false, login: true, role:isValid.role };
                 }
             }
@@ -95,7 +95,7 @@ class usuarioModel {
                 } else {
                     //SaveDb;
                     access_token = Token.generateAccessToken(usuario);
-                    console.log(access_token);
+                 
                     await this.updateTokenByUser({token:access_token,nombre:nombre});
                 }
                 return { error: false, login: true, token: access_token,role:usuario.role };

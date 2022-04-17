@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
-
+const { sendMessage } = require('../utils/socket-io');
 /******************************************************************************
  *                              Img Controller
  ******************************************************************************/
@@ -31,7 +31,9 @@ class ModeloImgController {
         if (result.error == true) {
             res.status(505).send(result);
         } else {
-            res.status(200).send("Img creado con exito");
+            const modelo = await ModelImgModel.findOne({ modelo: req.body.modelo });
+            sendMessage("new modelo", modelo);
+            res.status(200).send(modelo);
         }
 
     };
@@ -41,10 +43,9 @@ class ModeloImgController {
         if (result.error == true) {
             res.status(505).send(result);
         } else {
-            const { affectedRows, changedRows, info } = result;
-            const message = !affectedRows ? 'User not found' :
-                affectedRows && changedRows ? 'User updated successfully' : 'Updated faild';
-            res.status(200).send({ message, info });
+            const modelo = await ModelImgModel.findOne({ modelo: req.params.id });
+            sendMessage("edit modelo", modelo);
+            res.status(200).send(modelo);
         }
     };
 
@@ -57,6 +58,7 @@ class ModeloImgController {
             res.status(505).send(result);
             
         } else {
+            sendMessage("remove modelo", req.params.id);
             res.status(200).send('IMG eliminado');
         }
 

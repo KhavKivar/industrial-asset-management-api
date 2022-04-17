@@ -29,12 +29,12 @@ class EquipoModel {
 
     findOne = async (params) => {
         const { columnSet, values } = multipleColumnSet(params)
-        console.log(columnSet);
+      
         const sql = `SELECT * FROM ${this.tableName}
         WHERE ${columnSet}`;
 
         const result = await query(sql, [...values]);
-
+        console.log(result);
 
         return result[0];
     }
@@ -50,7 +50,8 @@ class EquipoModel {
             const result = await query(sql, [idEquipo, tipo, marca, modelo, serie, capacidad, mastil,altura,ano
                 ,horometro,estado,ubicacion,precio_neto]);
             let affectedRows = result ? result.affectedRows : 0;
-            return { rows: affectedRows, error: 0 };
+        
+            return { rows: affectedRows, error: 0, id: result.insertId  };
         } catch (e) {
             if (e.code == "ER_DUP_ENTRY") {
                 return { message: { sqlMessage: "El codigo interno ya existe" }, error: true };

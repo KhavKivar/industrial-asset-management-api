@@ -6,10 +6,12 @@ const cors = require("cors");
 
 const HttpException = require('./utils/HttpExceptionUtils.js');
 const errorMiddleware = require('./middleware/errorMiddleware');
+
 const http = require('http');
-const https = require('https');
-const fs = require('fs');
-const path = require('path');
+
+
+
+
 
 
 
@@ -93,10 +95,35 @@ app.all('*', (req, res, next) => {
 
 
 
+const server = http.createServer(app);
 
-app.listen(app.get('port'), () => {
-  console.log('Server on port', app.get('port'))
+const {socketConnection}  = require('./utils/socket-io');
+
+socketConnection(server);
+
+// const { Server } = require("socket.io");
+// const io = new Server(server,{
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"]
+// }
+
+// });
+
+// io.on('connection', (socket) => {
+//   console.log('a user connected');
+
+
+//   socket.on('disconnect', () => {
+//     console.log('user disconnected');
+//   });
+// });
+
+server.listen(app.get('port'), () => {
+  console.log('Server on port', app.get('port'));
+  
 });
+
 
 // Create an HTTP service.
 

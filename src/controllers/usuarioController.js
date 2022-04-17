@@ -33,7 +33,7 @@ class UsuarioController {
                 res.status(505).send({ message: "Invalid token"});
             }
             else {
-                console.log(result);
+               
                 res.send({ message: "Login Success",
                 role:result.role });
             
@@ -64,11 +64,10 @@ class UsuarioController {
         const result = await usuarioModel.create(req.body);
 
         if (result.error == true) {
-            console.log(result);
+            
             res.status(505).send(result);
         } else {
-            console.log(result);
-
+           
             const cliente = await usuarioModel.findOne({ id: result.id });
             res.status(200).send(cliente);
         }
@@ -81,7 +80,7 @@ class UsuarioController {
         if (result.error == true) {
             res.status(505).send(result);
         } else {
-            console.log(req.params.id);
+       
             const cliente = await usuarioModel.findOne({ id: req.params.id });
             res.status(200).send(cliente);
         }

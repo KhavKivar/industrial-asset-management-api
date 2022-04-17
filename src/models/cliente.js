@@ -25,6 +25,7 @@ class ClienteModel {
         console.log(columnSet);
         const sql = `SELECT * FROM ${this.tableName}
         WHERE ${columnSet}`;
+        
 
         const result = await query(sql, [...values]);
 

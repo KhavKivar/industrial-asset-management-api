@@ -38,6 +38,8 @@
 
     "react-tooltip": "^4.2.21",
 
+    "socket.io": "^4.4.1",
+
     "timeago.js": "^4.0.2"
 
   },
