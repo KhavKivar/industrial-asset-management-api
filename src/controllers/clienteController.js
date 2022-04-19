@@ -46,18 +46,10 @@ class ClienteController {
         if (result.error == true) {
             res.status(505).send(result);
         } else {
-            let cliente;
-            if(req.body.hasOwnProperty("rut")){
-                cliente = await ClienteModel.findOne({ rut: req.body.rut });
-                console.log(cliente);
-                sendMessage("edit cliente movimientos", { oldRut: req.params.id, newRut: req.body.rut, cliente: cliente });
-            }else{
-                cliente = await ClienteModel.findOne({ rut: req.params.id });
-            }
+            let cliente = await ClienteModel.findOne({ rut: req.body.rut });
+        
+            sendMessage("edit cliente",{ oldRut: req.params.id, newRut: req.body.rut, cliente: cliente });
              
-            console.log(cliente);
-
-            sendMessage("edit cliente", cliente);
             res.status(200).send(cliente);
         }
 
