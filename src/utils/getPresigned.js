@@ -1,62 +1,47 @@
+const { randomUUID } = require('crypto');
+const { PutObjectCommand, S3Client } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
+const bucketName = process.env.AWS_BUCKET_NAME;
+const region = process.env.AWS_REGION;
+const s3 = new S3Client({ region });
 
-var AWS = require('aws-sdk');
-const dotenv = require('dotenv');
-const uuid = require("uuid");
+const allowedTypes = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.pdf': 'application/pdf',
+};
 
-dotenv.config();
-
-const bucketName =process.env.AWS_BUCKET_NAME;
-const region =process.env.AWS_REGION; 
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY; 
-// Init environment
-
-AWS.config.update({ region: region });
-
-
-const s3 = new AWS.S3({
-  accessKeyId: accessKeyId,
-  secretAccessKey: secretAccessKey,
-  region: region,
-  signatureVersion: "v4",
-
-  //   useAccelerateEndpoint: true
-});
-
-const getPresignedUrl = (req, res) => {
-  let fileType = req.body.fileType;
-  if (fileType != ".jpg" && fileType != ".png" && fileType != ".jpeg") {
-    return res
-      .status(403)
-      .json({ success: false, message: "Image format invalid" });
+const getPresignedUrl = async (req, res) => {
+  const fileType = String(req.body.fileType || '').toLowerCase();
+  if (!allowedTypes[fileType]) {
+    return res.status(403).json({ success: false, message: 'File format invalid' });
   }
 
-  fileType = fileType.substring(1, fileType.length);
+  if (!bucketName || !region) {
+    return res.status(503).json({ success: false, message: 'Storage is not configured' });
+  }
 
-  const fileName = uuid.v4();
-  const s3Params = {
+  const fileName = `${randomUUID()}${fileType}`;
+  const command = new PutObjectCommand({
+    ACL: 'public-read',
     Bucket: bucketName,
-    Key: fileName + "." + fileType,
-    Expires: 60 * 60,
-    ContentType: "image/" + fileType,
-    ACL: "public-read",
-  };
-
-  s3.getSignedUrl("putObject", s3Params, (err, data) => {
-    if (err) {
-      console.log(err);
-      return res.end();
-    }
-    const returnData = {
-      success: true,
-      message: "Url generated",
-      uploadUrl: data,
-      downloadUrl:
-        `https://${bucketName}.s3.amazonaws.com/${fileName}` + "." + fileType,
-    };
-    return res.status(201).json(returnData);
+    ContentType: allowedTypes[fileType],
+    Key: fileName,
   });
+
+  try {
+    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 });
+    return res.status(201).json({
+      success: true,
+      message: 'URL generated',
+      uploadUrl,
+      downloadUrl: `https://${bucketName}.s3.amazonaws.com/${fileName}`,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Unable to create upload URL' });
+  }
 };
 
 module.exports = getPresignedUrl;

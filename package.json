@@ -1,56 +1,32 @@
 {
-
+  "name": "industrial-asset-management-api",
+  "version": "1.0.0",
+  "description": "REST and realtime API for industrial equipment lifecycle management",
+  "private": true,
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-
-    "dev": "nodemon src/index.js"
-
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "check": "node --check src/index.js"
   },
-
   "dependencies": {
-
-    "aws-sdk": "^2.1066.0",
-
+    "@aws-sdk/client-s3": "^3.1121.0",
+    "@aws-sdk/s3-request-presigner": "^3.1121.0",
     "bcryptjs": "^2.4.3",
-
-    "connect-flash": "^0.1.1",
-
     "cors": "^2.8.5",
-
-    "crypto": "^1.0.1",
-
-    "dotenv": "^11.0.0",
-
-    "express": "^4.17.2",
-
-    "express-handlebars": "^6.0.2",
-
-    "express-mysql-session": "^2.1.7",
-
-    "express-session": "^1.17.2",
-
-    "express-validator": "^6.14.0",
-
-    "jsonwebtoken": "^8.5.1",
-
-    "morgan": "^1.10.0",
-
-    "mysql2": "^2.3.3",
-
-    "react-tooltip": "^4.2.21",
-
-    "socket.io": "^4.4.1",
-
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-validator": "^7.3.2",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.12.0",
+    "mysql2": "^3.12.0",
+    "socket.io": "^4.8.1",
     "timeago.js": "^4.0.2"
-
   },
-
   "devDependencies": {
-
-    "cross-env": "^7.0.3",
-
-    "nodemon": "^2.0.15"
-
+    "nodemon": "^3.1.9"
   }
-
 }
-

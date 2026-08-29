@@ -85,8 +85,8 @@ class usuarioModel {
          
             const result = await query(sql, [nombre]);
             const usuario = result[0];
-            const password_decrypt = CryptoUtils.decrypt(usuario.password)
-            if (password_decrypt == password) {
+            const passwordMatches = await CryptoUtils.compare(password, usuario.password)
+            if (passwordMatches) {
                 /* Si no existe el token lo agrego a la bd*/
                 const  tokenState = await this.userHasToken({nombre:nombre});
                 let access_token = "";
@@ -112,7 +112,7 @@ class usuarioModel {
         const sql = `INSERT INTO ${this.tableName}
         ( nombre, password) VALUES (?,?)`;
         try {
-            const password_encrypt = CryptoUtils.encrypt(password);
+            const password_encrypt = await CryptoUtils.hash(password);
             const result = await query(sql, [nombre, password_encrypt,role]);
             let affectedRows = result ? result.affectedRows : 0;
             return { rows: affectedRows, error: 0, id: result.insertId  };
@@ -131,7 +131,7 @@ class usuarioModel {
     update = async (params, id) => {
         try {
             if(params.hasOwnProperty('password')){
-                const password_encrypt = CryptoUtils.encrypt(params.password);
+                const password_encrypt = await CryptoUtils.hash(params.password);
                 params.password = password_encrypt;
 
             }
